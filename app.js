@@ -1,50 +1,114 @@
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
+
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useUnifiedTopology', true);
+mongoose.connect("mongodb://localhost/yelpcamp");
 
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.set("view engine", "ejs");
 
-var campgrounds= [
-    {name: "Salmon Creek", image: "https://www.photosforclass.com/download/pixabay-1867275?webUrl=https%3A%2F%2Fpixabay.com%2Fget%2F57e8d3444855a914f6da8c7dda793f7f1636dfe2564c704c722f7adc914dc65c_960.jpg&user=Pexels"},
-    {name: "Granite Hill", image: "https://www.photosforclass.com/download/pixabay-1846142?webUrl=https%3A%2F%2Fpixabay.com%2Fget%2F57e8d1454b56ae14f6da8c7dda793f7f1636dfe2564c704c722f7adc914dc65c_960.jpg&user=Pexels"},
-    {name: "Mountain Goat's Rest", image: "https://www.photosforclass.com/download/pixabay-1149402?webUrl=https%3A%2F%2Fpixabay.com%2Fget%2F57e1d14a4e52ae14f6da8c7dda793f7f1636dfe2564c704c722f79d39f4dc650_960.jpg&user=Free-Photos"},
-    {name: "Fire Camp", image: "https://www.photosforclass.com/download/pixabay-4303359?webUrl=https%3A%2F%2Fpixabay.com%2Fget%2F52e3d5404957a514f6da8c7dda793f7f1636dfe2564c704c722f79d39f4dc650_960.jpg&user=chanwity"},
-    {name: "MarshMellow Fire", image: "https://www.photosforclass.com/download/pixabay-1031141?webUrl=https%3A%2F%2Fpixabay.com%2Fget%2F57e0d6424b56ad14f6da8c7dda793f7f1636dfe2564c704c722f79d39f4dc650_960.jpg&user=Free-Photos"}
-]
+//SCHEMA SETUP
+var campgroundSchema = new mongoose.Schema({
+    name:String,
+    image: String,
+    description: String
+});
+
+//setting up a model
+var campground = mongoose.model("campground",campgroundSchema);
+
+//creating a new campground object 
+/*
+campground.create({
+    name:"Granite Hill",
+    image: "https://www.photosforclass.com/download/pixabay-1867275?webUrl=https%3A%2F%2Fpixabay.com%2Fget%2F57e8d3444855a914f6da8c7dda793f7f1636dfe2564c704c722f7adc914dc65c_960.jpg&user=Pexels",
+    description: "This is a huge granite hill, No Bathrooms. No water. Beautiful granite!"
+
+}, (err, campground) => {
+    if (err){
+        console.log("error in creating campground!");
+    }
+    else{
+        console.log("Successfully added campground!");
+        console.log(campground);
+    }
+});
+
+*/
 app.get("/", (req,res) =>{
     res.render("landing.ejs");
 })
 
-/*Restful convention 
---GET request /campgrounds should saw all the campgrounds
---POST request /campgrounds creates a new campground
---GET request /campgrounds/new will have the form which sents the data to 
-                                Post route to create a new campground.
-*/
+
+//INDEX - show all the campgrounds
 app.get("/campgrounds", (req,res) =>{
+    //get all the campgrounds from database and render on the page
+    //campground.find will either give error or return all the campgrounds
+    campground.find({}, (err, allCampgrounds) =>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            res.render("index", {campgrounds:allCampgrounds});
+        }
+        });
     
-    res.render("campgrounds", {campgrounds:campgrounds});
 });
 
+//CREATE - add new campground to db
 app.post("/campgrounds",(req,res) =>{
 
    // getting data from the form and adding it th campground Array
   var name =  req.body.name;
    var image = req.body.image;
-   var newCampground = {name: name, image: image};
-   campgrounds.push(newCampground);
-   //After adding a new campground to the array 
-   //redirect back to campgrounds page
+   var description = req.body.description;
+   var newCampground = {name: name, image: image, description: description};
 
-   res.redirect("/campgrounds");
+  //create a new campground and save it to DB
+  //campground.create will add the newly created campground or will return an error
+
+    campground.create(newCampground, (err, newlycreatedCampground)=> {
+        if(err){
+            console.log(err);
+        }
+        else{
+    //After adding a new campground to the Database 
+    //redirect back to campgrounds page
+
+    res.redirect("/campgrounds");
+        }
+    });
+
+  
 });
 
-//setting up a new form
+//NEW - show form to create new campground
 app.get("/campgrounds/new", (req,res) => {
 res.render("new");
 });
+
+//SHOW - shows info about one campground
+app.get("/campgrounds/:id", (req,res) =>{
+    campground.findById(req.params.id, (err,foundCampground)=>{
+
+            if(err){
+                console.log(err);
+            }
+            else{
+    //find the campground with the provided ID
+    //render show template with that campground
+                res.render("show",{campground:foundCampground});
+            }
+    });
+    
+    
+    
+})
+
 
 app.listen(3000, () => {
     console.log("server has started!");
