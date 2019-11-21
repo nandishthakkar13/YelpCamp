@@ -52,4 +52,25 @@ Each Campground has:
 * Require everything correctly
  
 
+# Add Seeds File
+* Add a seeds.j file
+* Run the seeds file everytime the server starts
+
+# Add the Comment Model
+* Make our errors go away!
+* Display comments on campgroound show page
+
+# Comment New/Create
+* Discuss nested routes
+* Add the comment new and create routes
+* Add the new comment form
+
+# Style Show Page
+* Add sidebar to show page
+* Display comments nicely
+
+
+
+
+ 
 

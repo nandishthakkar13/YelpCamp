@@ -2,43 +2,21 @@ var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
+var campground = require("./models/campground");
+var comment= require("./models/comment");
+var seedDB = require("./seeds");
+
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect("mongodb://localhost/yelpcamp");
 
+seedDB();
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.set("view engine", "ejs");
 
-//SCHEMA SETUP
-var campgroundSchema = new mongoose.Schema({
-    name:String,
-    image: String,
-    description: String
-});
 
-//setting up a model
-var campground = mongoose.model("campground",campgroundSchema);
-
-//creating a new campground object 
-/*
-campground.create({
-    name:"Granite Hill",
-    image: "https://www.photosforclass.com/download/pixabay-1867275?webUrl=https%3A%2F%2Fpixabay.com%2Fget%2F57e8d3444855a914f6da8c7dda793f7f1636dfe2564c704c722f7adc914dc65c_960.jpg&user=Pexels",
-    description: "This is a huge granite hill, No Bathrooms. No water. Beautiful granite!"
-
-}, (err, campground) => {
-    if (err){
-        console.log("error in creating campground!");
-    }
-    else{
-        console.log("Successfully added campground!");
-        console.log(campground);
-    }
-});
-
-*/
 app.get("/", (req,res) =>{
     res.render("landing.ejs");
 })
@@ -53,7 +31,7 @@ app.get("/campgrounds", (req,res) =>{
             console.log(err);
         }
         else{
-            res.render("index", {campgrounds:allCampgrounds});
+            res.render("campgrounds/index", {campgrounds:allCampgrounds});
         }
         });
     
@@ -88,26 +66,78 @@ app.post("/campgrounds",(req,res) =>{
 
 //NEW - show form to create new campground
 app.get("/campgrounds/new", (req,res) => {
-res.render("new");
+res.render("campgrounds/new");
 });
 
 //SHOW - shows info about one campground
 app.get("/campgrounds/:id", (req,res) =>{
-    campground.findById(req.params.id, (err,foundCampground)=>{
+    campground.findById(req.params.id).populate("comments").exec(function (err,foundCampground){
 
             if(err){
                 console.log(err);
-            }
+            }  
             else{
     //find the campground with the provided ID
     //render show template with that campground
-                res.render("show",{campground:foundCampground});
+                res.render("campgrounds/show",{campground:foundCampground});
             }
     });
     
     
     
 })
+
+
+//  ================================
+// COMMENTS ROUTES
+
+app.get("/campgrounds/:id/comments/new",(req,res) =>{
+
+    //find campground by id
+    campground.findById(req.params.id, (err,campground) => {
+        if(err){
+            console.log(err);
+        }
+        else{
+            //if we get campground from the database we would render it
+            res.render("comments/new",{campground:campground});
+        }
+    })
+   
+});
+
+
+app.post("/campgrounds/:id/comments", (req, res) =>{
+
+    //find campground by id
+   campground.findById(req.params.id, (err,campground) => {
+        if(err){
+            console.log(err);
+            res.redirect("/campgrounds");
+        }
+        else{
+
+            comment.create(req.body.comment, (err, newComment) =>{
+                if(err){
+                    console.log(err);
+                }
+        
+                else{
+                    
+                    campground.comments.push(newComment);
+                    campground.save();
+                    res.redirect("/campgrounds/" + campground._id);
+                }
+            })
+        }
+    })
+     
+
+    
+
+});
+
+//  ================================
 
 
 app.listen(3000, () => {
