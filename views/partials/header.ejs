@@ -3,6 +3,7 @@
     <head>
         <title>YelpCamp</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/stylesheets/main.css">
     </head>
     <body>
 
@@ -18,18 +19,22 @@
                 
                     <ul class="nav navbar-nav navbar-right">
                 
+                        <% if(!currentUser){ %>
                         <li class="navbar-item">
-                            <a class="navbar-link" href="/">Login</a>
+                            <a class="navbar-link" href="/login">Login</a>
                         </li>
 
                         <li class="navbar-item">
-                            <a class="navbar-link" href="/">Sign Up</a>
+                            <a class="navbar-link" href="/register">Sign Up</a>
                         </li>
-
+                   <% } else{ %>
                         <li class="navbar-item">
-                            <a class="navbar-link" href="/">Logout</a>
+                            <a class="navbar-link">Signed In as <%=currentUser.username%></a>
                         </li>
-                           
+                        <li class="navbar-item">
+                            <a class="navbar-link" href="/logout">Logout</a>
+                        </li>
+                   <% } %>
                     </ul>
                         
                 </div>   

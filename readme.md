@@ -69,6 +69,36 @@ Each Campground has:
 * Add sidebar to show page
 * Display comments nicely
 
+# Style Show Page
+* Add sidebar to show page
+* Display comments nicely
+
+# Finish Styling Show Page
+* Add public directory
+* Add custom stylesheet
+
+# Add User Model
+* Install all packages needed for auth
+* Define User Model
+
+# Auth Pt-2 
+* Configure Passport
+* Add register routes
+* Add register template
+
+# Auth Pt-3 - Login
+* Add Login routes
+* Add Login template
+
+# Auth Pt-4 Logout/ Navbar
+* Add Logout route
+* Prevent user from adding a comment if not signed in
+* Add links to navbar
+
+
+# Auth Pt-5 Show/hide links
+* Show/hide auth links in navbar correctly
+
 
 
 
