@@ -24,7 +24,7 @@ function seedDB(){
 
     //remove all campgrounds
     campground.remove({}, (err) =>{
-        if(err){
+    /*   if(err){
             console.log(err);
         }
         console.log("removed campgrounds!");
@@ -40,8 +40,7 @@ function seedDB(){
                     //create a comment
                         Comment.create(
                             {
-                                text: "This place is great, but I wish there was internet",
-                                author: "Homer"
+                                text: "This place is great, but I wish there was internet"
                             }, function(err, comment){
                                 if(err){
                                     console.log(err);
@@ -55,14 +54,10 @@ function seedDB(){
                 }
             })
         })
-
+*/
 
     });
-    
-
-  
-
-
+ 
 
 }
 

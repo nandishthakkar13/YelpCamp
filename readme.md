@@ -99,7 +99,16 @@ Each Campground has:
 # Auth Pt-5 Show/hide links
 * Show/hide auth links in navbar correctly
 
+# Refactor the routes
+* Use Express router to reorganize all routes
 
+# Users + Comments
+* Associate users and comments
+* Save author's name to a comment automatically
+
+# Users + Campgrounds
+* Prevent an unauthenticated user from creating a campground
+* Save username+id to newly created campground
 
 
  
