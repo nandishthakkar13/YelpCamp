@@ -1,0 +1,19 @@
+
+    <%include   ../partials/header  %>
+
+    <div class="container">
+        <div class="row">
+        <h1>Edit</h1>
+    
+        <form action="/campgrounds/<%=campground._id%>?_method=PUT" method="POST">
+            <input type="text" class="form-control" value="<%=campground.name%>" name="campground[name]">
+            <input type="text" class="form-control" value="<%=campground.image%>" name="campground[image]">
+            <input type="text" class="form-control" value="<%=campground.description%>" name="campground[description]">
+            <button class="btn btn-primary btn-lg">Submit!</button>
+        </form>
+    
+        <a href="/campgrounds">Go Back</a>
+        </div>
+    </div>
+    
+    <%include   ../partials/footer  %>

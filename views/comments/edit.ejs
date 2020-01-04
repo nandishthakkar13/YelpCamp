@@ -1,0 +1,16 @@
+<%include   ../partials/header  %>
+
+<div class="container">
+    <div class="row">
+    <h1>Edit Comment</h1>
+
+    <form action="/campgrounds/<%=campground_id %>/comments/<%=comment._id%>?_method=PUT" method="POST">
+        <input type="text" class="form-control" value="<%=comment.text%>" name="comment[text]">
+        <button class="btn btn-primary btn-lg">Submit!</button>
+    </form>
+
+    <a href="/campgrounds/<%=campground_id %>">Go Back</a>
+    </div>
+</div>
+
+<%include   ../partials/footer  %>

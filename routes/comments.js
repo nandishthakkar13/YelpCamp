@@ -3,9 +3,10 @@ var express = require("express");
 var router = express.Router({mergeParams:true}); 
 var campground = require("../models/campground");
 var comment = require("../models/comment");
+var middleware = require("../middleware");
 //added isLoggedIn function as middleware to check 
 // if the user is authenticated (Logged In) before he can comment
-router.get("/new",isLoggedIn,(req,res) =>{
+router.get("/new",middleware.isLoggedIn,(req,res) =>{
 
     //find campground by id
     campground.findById(req.params.id, (err,campground) => {
@@ -23,7 +24,7 @@ router.get("/new",isLoggedIn,(req,res) =>{
 //adding middleware function isLoggedIn to authenticate user
 // you have to check in the post route too because a user can fire a 
 // comment using sql injection without logging in 
-router.post("/",isLoggedIn, (req, res) =>{
+router.post("/",middleware.isLoggedIn, (req, res) =>{
 
     //find campground by id
    campground.findById(req.params.id, (err,campground) => {
@@ -57,14 +58,50 @@ router.post("/",isLoggedIn, (req, res) =>{
 
 });
 
-function isLoggedIn(req,res,next){
-    //if the user is authenticated then we move on to next thing else 
-    //we redirect the user to login first
-    if(req.isAuthenticated()){
-        return next();
+// COMMENT EDIT ROUTE
+router.get("/:comment_id/edit",middleware.checkCommentOwnership, (req,res) =>{
+comment.findById(req.params.comment_id,(err,foundComment)=>{
+
+    if(err){
+        res.redirect("back");
     }
-    res.redirect("/login");
-}
+    else{
+        res.render("comments/edit",{campground_id:req.params.id,comment:foundComment});
+
+    }
+});
+
+});
+
+//COMMENT UPDATE ROUTE
+router.put("/:comment_id",middleware.checkCommentOwnership,(req,res)=>{
+
+    //find and update the comment
+    //redirect somewhere
+
+    comment.findByIdAndUpdate(req.params.comment_id,req.body.comment, (err, updatedComment)=>{
+
+        if(err){
+            res.redirect("back");
+        }
+        else{
+            res.redirect("/campgrounds/" + req.params.id);
+        }
+    })
+});
+//COMMENT DELETE ROUTE
+router.delete("/:comment_id",middleware.checkCommentOwnership,(req,res)=>{
+
+    comment.findByIdAndRemove(req.params.comment_id,(err)=>{
+
+        if(err){
+            res.redirect("back");
+        }
+        else{
+            res.redirect("/campgrounds/" + req.params.id);
+        }
+    });
+});
 
 
 module.exports = router;
