@@ -1,7 +1,7 @@
 
 <%include   ../partials/header  %>
 
-<div class="container"> 
+
     <div class="row">
         <div class="col-md-3">
 
@@ -18,7 +18,7 @@
                  <img src="<%=campground.image%>">
                 </div>
                 <div class="caption">
-                    <h4 class="pull-right">$9.00/night</h4>
+                    <h4 class="pull-right">$<%=campground.price%>/night</h4>
                     <h4><a><%=campground.name%></a></h4>
                     <p><%=campground.description %></p>
                     <h4>
@@ -66,6 +66,6 @@
             </div>
         </div>
     </div>
-</div>
+
 
 <%include   ../partials/footer  %>

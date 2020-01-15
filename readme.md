@@ -142,5 +142,9 @@ Each Campground has:
 * Hide/Show edit and delete buttons
 * Refactor middleware
 
+# Adding in Flash!
+* Install and configure connect-flash
+* Add bootstrap alerts to header
+
 
 

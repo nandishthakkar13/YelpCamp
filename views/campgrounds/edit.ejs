@@ -1,7 +1,7 @@
 
     <%include   ../partials/header  %>
 
-    <div class="container">
+   
         <div class="row">
         <h1>Edit</h1>
     
@@ -9,11 +9,12 @@
             <input type="text" class="form-control" value="<%=campground.name%>" name="campground[name]">
             <input type="text" class="form-control" value="<%=campground.image%>" name="campground[image]">
             <input type="text" class="form-control" value="<%=campground.description%>" name="campground[description]">
+            <input type="number" class="form-control" value="<%=campground.price%>" name="campground[price]" min="0.01" step="0.01">
             <button class="btn btn-primary btn-lg">Submit!</button>
         </form>
     
         <a href="/campgrounds">Go Back</a>
         </div>
-    </div>
+   
     
     <%include   ../partials/footer  %>

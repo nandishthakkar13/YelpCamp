@@ -11,7 +11,16 @@ if(req.isAuthenticated()){
 
 //otherwise redirect
 campground.findById(req.params.id,(err,foundcampground)=>{
-  if(err){
+    /*
+    err is returned when the id given by the user is smaller then what
+    mongodb uses so if it doesnt find the id it will give error
+    on the other hand if the user passes the same length of id but 
+    there is no data assigned to that id then null would be return
+    so we need to handle that as well
+    so we would check if found the campground or not.
+    */
+  if(err  || !foundcampground){
+      req.flash("error","Campground not found!");
       res.redirect("back");
   }
   else{
@@ -22,11 +31,13 @@ campground.findById(req.params.id,(err,foundcampground)=>{
      next();
       }
       else{
+          req.flash("error","you dont have permissions to do that")
           res.redirect("back");
       }
   }
 });
 }else{
+    req.flash("error","You need to be logged in to do that");
  res.redirect("back");
 }
 }
@@ -39,7 +50,8 @@ if(req.isAuthenticated()){
 
 //otherwise redirect
 comment.findById(req.params.comment_id,(err,foundcomment)=>{
-  if(err){
+  if(err || !foundcomment){
+      req.flash("error","Comment not found");
       res.redirect("back");
   }
   else{
@@ -50,11 +62,13 @@ comment.findById(req.params.comment_id,(err,foundcomment)=>{
      next();
       }
       else{
+          req.flash("error","You dont have the permission to do that!");
           res.redirect("back");
       }
   }
 });
 }else{
+    req.flash("error","you need to be logged in to do that!");
  res.redirect("back");
 }
 }
@@ -65,6 +79,16 @@ middlewareObj.isLoggedIn = (req,res,next)=>{
     if(req.isAuthenticated()){
         return next();
     }
+
+ // this adds up the content to the next request 
+ //so this would be add to the login request
+ // in other words the content would be added to the login page request
+ //so we have to handle that in the login page code
+ //you have to write this code before you redirect in order to show on that page
+//after using req.flash use res.redirect to render 
+//and not res.render
+    req.flash("error","You need to be logged in to do that"); 
+   
     res.redirect("/login");
 }
 module.exports = middlewareObj;

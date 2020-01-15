@@ -31,7 +31,8 @@ router.post("/",middleware.isLoggedIn,(req,res) =>{
        username: req.user.username,
        id: req.user._id
    }
-   var newCampground = {name: name, image: image, description: description, author:author};
+   var price = req.body.price;
+   var newCampground = {name: name, image: image, description: description, author:author,price:price};
 
   //create a new campground and save it to DB
   //campground.create will add the newly created campground or will return an error
@@ -43,7 +44,7 @@ router.post("/",middleware.isLoggedIn,(req,res) =>{
         else{
     //After adding a new campground to the Database 
     //redirect back to campgrounds page
-
+            req.flash("success","Successfully added new Campground!");
     res.redirect("/campgrounds");
         }
     });
@@ -60,8 +61,9 @@ res.render("campgrounds/new");
 router.get("/:id", (req,res) =>{
     campground.findById(req.params.id).populate("comments").exec(function (err,campground){
 
-            if(err){
-                console.log(err);
+            if(err || !campground){
+                req.flash("error","Campground not found");
+                res.redirect("back");
             }  
             else{
     //find the campground with the provided ID
